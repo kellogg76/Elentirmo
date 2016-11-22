@@ -10,6 +10,12 @@ dust_cover_text.set('Cover Closed')
 flat_box_text = StringVar()
 flat_box_text.set('Flat Box Off')
 
+dslr_text = StringVar()
+dslr_text.set('DSLR Off')
+
+roof_text = StringVar()
+roof_text.set('Roof closed')
+
 # Tweeting Setup
 global tweet_text
 import sys
@@ -109,25 +115,123 @@ def flat_off():
     tweet_text = "Lightbox is off."
     tweet()
 
-open_dust_cover_btn = Button(text=" Open Cover ", width=15, command=dust_cover_open)
-open_dust_cover_btn.grid(row=0, column=0)
+def dslr_on():
+    print "Activating DSLR"
+    ## Open a serial connection with Arduino.
+    import time
+    import serial
+    ##ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
+    time.sleep(3)                       # Wait 3 seconds for Arduino to reset
+    print ser                           # Print serial config
+    print "Sending serial command to turn on the dslr relay."
+    ser.write("D")
+    print "Opening serial connection."
+    ser.close()
+    # Reminder to close the connection when finished
+    if(ser.isOpen()):
+     print "Serial connection is still open."
+    dslr_label.config(bg="Green")
+    dslr_text.set('DSLR on')
+    tweet_text = "DSLR is on."
+    tweet()
 
-close_dust_cover_btn = Button(text=" Close Cover ", width=15, command=dust_cover_close)
-close_dust_cover_btn.grid(row=1, column=0)
+def dslr_off():
+    print "Dectivating DSLR"
+    ## Open a serial connection with Arduino.
+    import time
+    import serial
+    ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
+    time.sleep(3)                       # Wait 3 seconds for Arduino to reset
+    print ser                           # Print serial config
+    print "Sending serial command to turn off the dslr via relay."
+    ser.write("M")
+    print "Opening serial connection."
+    ser.close()
+    # Reminder to close the connection when finished
+    if(ser.isOpen()):
+     print "Serial connection is still open."
+    dslr_label.config(bg="red")
+    dslr_text.set('DSLR Off')
+    tweet_text = "DSLR is off."
+    tweet()
 
-flat_box_on_btn = Button(text="Turn On Light", width=15, command=flat_on)
-flat_box_on_btn.grid(row=0, column=2)
+def roof_open():
+    print "Opening roof"
+    ## Open a serial connection with Arduino.
+    import time
+    import serial
+    ##ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
+    time.sleep(3)                       # Wait 3 seconds for Arduino to reset
+    print ser                           # Print serial config
+    print "Sending serial command to open the roof."
+    ser.write("1")
+    print "Opening roof."
+    ser.close()
+    # Reminder to close the connection when finished
+    if(ser.isOpen()):
+     print "Serial connection is still open."
+    roof_label.config(bg="Green")
+    roof_text.set('Roof open')
+    tweet_text = "Roof open."
+    tweet()
 
-flat_box_off_btn = Button(text="Turn Off Light", width=15, command=flat_off)
-flat_box_off_btn.grid(row=1, column=2)
+def roof_close():
+    print "Opening roof"
+    ## Open a serial connection with Arduino.
+    import time
+    import serial
+    ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
+    time.sleep(3)                       # Wait 3 seconds for Arduino to reset
+    print ser                           # Print serial config
+    print "Sending serial command to open the roof."
+    ser.write("M")
+    print "Opening serial connection."
+    ser.close()
+    # Reminder to close the connection when finished
+    if(ser.isOpen()):
+     print "Serial connection is still open."
+    roof_label.config(bg="red")
+    roof_text.set('Roof closed')
+    tweet_text = "Roof is closed."
+    tweet()
 
-status_label = Label(root, text=("Current Status"), width=15, fg="Black")
-status_label.grid(row=2, column=1)
+#Buttons
+open_dust_cover_btn = Button(text=" Open Dust Cover ", width=15, command=dust_cover_open)
+open_dust_cover_btn.grid(row=1, column=1)
+
+close_dust_cover_btn = Button(text=" Close Dust Cover ", width=15, command=dust_cover_close)
+close_dust_cover_btn.grid(row=1, column=2)
+
+flat_box_on_btn = Button(text="Turn On Lightbox", width=15, command=flat_on)
+flat_box_on_btn.grid(row=2, column=1)
+
+flat_box_off_btn = Button(text="Turn Off Lightbox", width=15, command=flat_off)
+flat_box_off_btn.grid(row=2, column=2)
+
+dslr_on_btn = Button(text="Turn On DSLR", width=15, command=flat_on)
+dslr_on_btn.grid(row=3, column=1)
+
+dslr_off_btn = Button(text="Turn Off DSLR", width=15, command=flat_off)
+dslr_off_btn.grid(row=3, column=2)
+
+roof_open_btn = Button(text="Open roof", width=15, command=flat_on)
+roof_open_btn.grid(row=4, column=1)
+
+roof_close_btn = Button(text="Close roof", width=15, command=flat_off)
+roof_close_btn.grid(row=4, column=2)
+
+#Labels
 
 dust_cover_label = Label(root, textvariable=dust_cover_text, width=15, fg="Black", bg="Red")
-dust_cover_label.grid(row=2, column=0)
+dust_cover_label.grid(row=1, column=0)
 
 flat_box_label = Label(root, textvariable=flat_box_text, width=15, fg="Black", bg="Red")
-flat_box_label.grid(row=2, column=2)
+flat_box_label.grid(row=2, column=0)
+
+dslr_label = Label(root, textvariable=dslr_text, width=15, fg="Black", bg="Red")
+dslr_label.grid(row=3, column=0)
+
+roof_label = Label(root, textvariable=roof_text, width=15, fg="Black", bg="Red")
+roof_label.grid(row=4, column=0)
 
 root.mainloop()
