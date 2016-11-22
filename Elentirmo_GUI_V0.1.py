@@ -11,7 +11,7 @@ flat_box_text = StringVar()
 flat_box_text.set('Flat Box Off')
 
 # Tweeting Setup
-tweet_text = StringVar()
+global tweet_text
 import sys
 from twython import Twython
 CONSUMER_KEY = 'oQsRvuBMJaCfbvXHjgjQ'
@@ -25,15 +25,16 @@ print (time.strftime("%Y.%m.%d-%H:%M:%S"))
 def tweet():
     #print "Tweeting now..."
     import os
-    api.update_status(status=time.strftime("%Y.%m.%d-%H:%M:%S") + " - " + 'tweet_text')
+    api.update_status(status=time.strftime("%Y.%m.%d-%H:%M:%S") + " - " + tweet_text)
     return;
 
 def dust_cover_open():
-    #print "Opening"
+    #print "Opening dust cover"
+    global tweet_text
     ## Open a serial connection with Arduino.
     import time
     import serial
-    ##ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
+    ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
     time.sleep(3)                       # Wait 3 seconds for Arduino to reset
     print ser                           # Print serial config
     print "Sending serial command to OPEN the dust cover."
@@ -53,7 +54,7 @@ def dust_cover_close():
     ## Open a serial connection with Arduino.
     import time
     import serial
-    ##ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
+    ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
     time.sleep(3)                       # Wait 3 seconds for Arduino to reset
     print ser                           # Print serial config
     print "Sending serial command to CLOSE the dust cover."
@@ -93,7 +94,7 @@ def flat_off():
     ## Open a serial connection with Arduino.
     import time
     import serial
-    ##ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
+    ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
     time.sleep(3)                       # Wait 3 seconds for Arduino to reset
     print ser                           # Print serial config
     print "Sending serial command to turn off the flat box via relay."
