@@ -1,7 +1,9 @@
-# ArduinoTelescopeDustCover
+# Elentirmo Observatory Control Software
 An open source project to automate some aspects of amateur astronomy.
 
-**Aim: Use an Arduino Nano to open and close the dust cover on a telescope and also control and LED lightbox.**
+**Aims: Use an Arduino Nano to open and close the dust cover on a telescope and also control and LED lightbox.
+        Tweet event based status updates (via ASCOM?)
+        Use relays to activate multiple devices (lightbox, DSLR, roof, etc)**
 
 Requirements:
 - Arduino Nano (like [this](https://www.aliexpress.com/item/Nano-3-0-controller-compatible-with-arduino-nano-CH340-USB-driver-with-CABLE-NANO-V3-0/32478082112.html?spm=2114.01010208.3.11.omwhu1&ws_ab_test=searchweb0_0,searchweb201602_5_10065_10068_10084_10083_10080_10082_10081_10060_10061_10062_10056_10055_10054_10059_10078_10079_10073_10096_10070_10100_10052_423_10050_10051_424,searchweb201603_8&btsid=b7afc5ec-93f1-4158-8d06-f842e11ed59a ))
@@ -17,10 +19,6 @@ Instal Python 2.7.12 (download [here](https://www.python.org/downloads/))
 Add Python path to PATH (instructions [here](http://stackoverflow.com/questions/3701646/how-to-add-to-the-pythonpath-in-windows-7))
 
 Start a CMD prompt as administrator (instructions [here](https://technet.microsoft.com/en-us/library/cc947813(v=ws.10).aspx)) 
-
-From the CMD prompt we manually install Pip using the following command
-
-`python get-pip.py`
 
 Next we want to install pyserial, again at the CMD prompt we type
 
@@ -58,7 +56,7 @@ Now we modify the Arduino code to include the servo. The arduino file is called 
 
 Affix the servo to the OTA. If this is all you wanted to acheive then stop here and just run the open and close python scripts to control the dust cover. If you also want to control an LED lightbox then continue below.
 
-**Controlling an LED Lightbox**
+**Controlling an LED Lightbox via Sequence Generator Pro**
 
 To control my flat box (from [AliExpress](https://www.aliexpress.com/item/LED-panel-light-square-lampada-300x300-18W-high-bright-led-indoor-ceiling-lamp-SMD5630-white-warm/1785529655.html)) I bought a 4 relay switch (from [AliExpress](https://www.aliexpress.com/item/Brand-New-5V-4-Channel-Relay-Module-for-Arduino-PIC-ARM-DSP-AVR-Raspberry-Pi/1952619257.html)) and wired it up to be in a Normally Open (NO) format so that when theres no signal from the Arduino the relay is not activating the flat panel.
 
