@@ -22,14 +22,14 @@ api = Twython(CONSUMER_KEY,CONSUMER_SECRET,ACCESS_KEY,ACCESS_SECRET)
 import time
 print (time.strftime("%Y.%m.%d-%H:%M:%S"))
 
-def tweet_relay_status():
-    print "Tweeting now..."
+def tweet():
+    #print "Tweeting now..."
     import os
     api.update_status(status=time.strftime("%Y.%m.%d-%H:%M:%S") + " - " + 'tweet_text')
     return;
 
 def dust_cover_open():
-    print "Opening"
+    #print "Opening"
     ## Open a serial connection with Arduino.
     import time
     import serial
@@ -45,6 +45,8 @@ def dust_cover_open():
      print "Serial connection is still open."
     dust_cover_label.config(bg="Green")
     dust_cover_text.set('Cover is Open')
+    tweet_text = "Dust cover is open."
+    tweet()
 
 def dust_cover_close():
     print "Closing"
@@ -63,7 +65,9 @@ def dust_cover_close():
      print "Serial connection is still open."
     dust_cover_label.config(bg="red")
     dust_cover_text.set('Cover is closed')
-
+    tweet_text = "Dust cover is closed."
+    tweet()
+    
 def flat_on():
     print "Activating flat box"
     ## Open a serial connection with Arduino.
@@ -81,6 +85,8 @@ def flat_on():
      print "Serial connection is still open."
     flat_box_label.config(bg="Green")
     flat_box_text.set('Flat Box on')
+    tweet_text = "Lightbox is on."
+    tweet()
 
 def flat_off():
     print "Dectivating flat box"
@@ -99,6 +105,8 @@ def flat_off():
      print "Serial connection is still open."
     flat_box_label.config(bg="red")
     flat_box_text.set('Flat Box Off')
+    tweet_text = "Lightbox is off."
+    tweet()
 
 open_dust_cover_btn = Button(text=" Open Cover ", width=15, command=dust_cover_open)
 open_dust_cover_btn.grid(row=0, column=0)
