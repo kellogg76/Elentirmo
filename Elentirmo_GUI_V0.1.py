@@ -10,6 +10,24 @@ dust_cover_text.set('Cover Closed')
 flat_box_text = StringVar()
 flat_box_text.set('Flat Box Off')
 
+# Tweeting Setup
+tweet_text = StringVar()
+import sys
+from twython import Twython
+CONSUMER_KEY = 'oQsRvuBMJaCfbvXHjgjQ'
+CONSUMER_SECRET = 'Im2K2iATjFWyZE07ApNBQy0vXhAMmyLFZ2AFynq6UY'
+ACCESS_KEY = '2341986678-ZGuDmP9NcswzKDHlMl1d7fT7tZJEclqCZrGDGpc'
+ACCESS_SECRET = 'cb42X2lgMMGhbQZYdVdI1PuHFkESO6ZnWoZP5Ipd0c30N'
+api = Twython(CONSUMER_KEY,CONSUMER_SECRET,ACCESS_KEY,ACCESS_SECRET)
+import time
+print (time.strftime("%Y.%m.%d-%H:%M:%S"))
+
+def tweet_relay_status():
+    print "Tweeting now..."
+    import os
+    api.update_status(status=time.strftime("%Y.%m.%d-%H:%M:%S") + " - " + 'tweet_text')
+    return;
+
 def dust_cover_open():
     print "Opening"
     ## Open a serial connection with Arduino.
