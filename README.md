@@ -57,7 +57,9 @@ Now we modify the Arduino code to include the servo. The arduino file is called 
 
 Affix the servo to the OTA. If this is all you wanted to acheive then stop here and just run the open and close python scripts to control the dust cover. If you also want to control an LED lightbox then continue below.
 
-**Controlling an LED Lightbox via Sequence Generator Pro**
+**Controlling an LED Lightbox via Sequence Generator Pro (SGP)**
+
+This section utilizes a modified form of the code [here](https://github.com/jwellman80/ArduinoLightbox) to interface with SGP.
 
 To control my flat box (from [AliExpress](https://www.aliexpress.com/item/LED-panel-light-square-lampada-300x300-18W-high-bright-led-indoor-ceiling-lamp-SMD5630-white-warm/1785529655.html)) I bought a 4 relay switch (from [AliExpress](https://www.aliexpress.com/item/Brand-New-5V-4-Channel-Relay-Module-for-Arduino-PIC-ARM-DSP-AVR-Raspberry-Pi/1952619257.html)) and wired it up to be in a Normally Open (NO) format so that when theres no signal from the Arduino the relay is not activating the flat panel.
 
