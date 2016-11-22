@@ -33,7 +33,7 @@ def dust_cover_open():
     ## Open a serial connection with Arduino.
     import time
     import serial
-    ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
+    ##ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
     time.sleep(3)                       # Wait 3 seconds for Arduino to reset
     print ser                           # Print serial config
     print "Sending serial command to OPEN the dust cover."
@@ -53,7 +53,7 @@ def dust_cover_close():
     ## Open a serial connection with Arduino.
     import time
     import serial
-    ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
+    ##ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
     time.sleep(3)                       # Wait 3 seconds for Arduino to reset
     print ser                           # Print serial config
     print "Sending serial command to CLOSE the dust cover."
@@ -73,7 +73,7 @@ def flat_on():
     ## Open a serial connection with Arduino.
     import time
     import serial
-    ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
+    ##ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
     time.sleep(3)                       # Wait 3 seconds for Arduino to reset
     print ser                           # Print serial config
     print "Sending serial command to turn on the flat box via relay."
@@ -93,7 +93,7 @@ def flat_off():
     ## Open a serial connection with Arduino.
     import time
     import serial
-    ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
+    ##ser = serial.Serial("COM9", 9600)   # Open serial port that Arduino is using
     time.sleep(3)                       # Wait 3 seconds for Arduino to reset
     print ser                           # Print serial config
     print "Sending serial command to turn off the flat box via relay."
