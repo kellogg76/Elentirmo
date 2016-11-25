@@ -189,6 +189,18 @@ void handleSerial()
         Serial.println(temp);
         break;
     /*
+    Turn Mats lightbox on
+    */
+      case 'L':
+      sprintf(temp, "*L%d000", deviceId);
+      Serial.println(temp);
+      Serial.println("Turning on Mat's lightbox");
+      //digitalWrite(ledYellow, HIGH);
+      //digitalWrite(CH1, HIGH);  //Activate realy channel 1
+      //delay(3000);
+      //digitalWrite(ledYellow, LOW);
+      break;
+    /*
     Get firmware version
       Request: >V000\n
       Return : *Vii001\n
@@ -217,32 +229,5 @@ void SetShutter(int val)
     // TODO: Actually handle this case
     coverStatus = val;
   }
-}
-
-void serialEvent()
-
-{if (Serial.available()) {
-   char ser = Serial.read();
-   if(ser == 'O'){  //Detect an open dust cover command
-    digitalWrite(ledWhite, HIGH);
-    servo1.write(open_angle);
-    delay(1000);
-    digitalWrite(ledWhite, LOW);
-   }else if(ser == 'C'){   //Detect a close dust cover command
-    digitalWrite(ledRed, HIGH);
-    servo1.write(close_angle);
-    delay(1000);
-    digitalWrite(ledRed, LOW);
-   }else if(ser == 'F'){   //Detect a turn on flat panel via relay command
-    digitalWrite(ledYellow, HIGH);
-    digitalWrite(CH1, HIGH);  //Activate realy channel 1
-    delay(3000);
-    digitalWrite(ledYellow, LOW);
-    }else if(ser == 'Q'){   //Detect a turn off flat panel via relay command
-    digitalWrite(ledYellow, HIGH);
-    digitalWrite(CH1, LOW);  //Dectivate realy channel 1
-    delay(3000);
-    digitalWrite(ledYellow, LOW);
- }
 }
 }
