@@ -191,7 +191,7 @@ void handleSerial()
     /*
     Turn Mats lightbox on
     */
-      case 'L':
+      case 'F':
       sprintf(temp, "*L%d000", deviceId);
       Serial.println(temp);
       Serial.println("Turning on Mat's lightbox");
