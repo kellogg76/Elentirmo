@@ -1,0 +1,229 @@
+/*
+A portion of the code below is from 
+What: LEDLightBoxAlnitak - PC controlled lightbox implmented using the 
+  Alnitak (Flip-Flat/Flat-Man) command set found here:
+  http://www.optecinc.com/astronomy/pdf/Alnitak%20Astrosystems%20GenericCommandsR3.pdf
+  Created By: Jared Wellman - jared@mainsequencesoftware.com
+  
+  Modified by Mat Nightingale for use with a standalone LED lightbox
+ */
+
+/*Commands for Lightbox-SGP integration
+ * Typical usage on the command prompt:
+Send     : >S000\n      //request state
+Recieve  : *S19000\n    //returned state
+Send     : >L000\n      //turn light on (uses set brightness value)
+Recieve  : *L19000\n    //confirms light turned on
+Send     : >D000\n      //turn light off (brightness value should not be changed)
+Recieve  : *D19000\n    //confirms light turned off.
+*/
+//SGP Setup
+volatile int ledPin = 13;      // the pin that the LED is attached to, change to realy once working
+int brightness = 0;
+
+enum devices
+{
+  FLAT_MAN_L = 10,
+  FLAT_MAN_XL = 15,
+  FLAT_MAN = 19,
+  FLIP_FLAT = 99
+};
+
+enum motorStatuses
+{
+  STOPPED = 0,
+  RUNNING
+};
+
+enum lightStatuses
+{
+  OFF = 0,
+  ON
+};
+
+enum shutterStatuses
+{
+  UNKNOWN = 0, // ie not open or closed...could be moving
+  CLOSED,
+  OPEN
+};
+
+int deviceId = FLAT_MAN;
+int motorStatus = STOPPED;
+int lightStatus = OFF;
+int coverStatus = UNKNOWN;
+
+//Servo Setup
+//Connect servo to GND (black or brown wire), 5V (red wire) and the signal (white or orange wire) to Analog 0
+#include <Servo.h>
+Servo servo1;
+int pos = 0; //variable to store servo position
+static int open_angle = 90;   //Determine the angle for your own setup through trial and error
+static int close_angle = 0;    //Determine the angle for your own setup through trial and error
+
+
+//LED Setup
+int ledYellow = 3;        // Yellow LED connected to digital pin 3 for flat panel relay
+int ledRed = 6;        // Red LED connected to digital pin 6 for closing cover
+int ledWhite = 12;     // White LED connected to digital pin 12 for opening cover
+
+
+//Relay Setup
+#define CH1 10   // Connect Digital Pin 10 on Arduino to CH1 on Relay Module (may be labelled IN1)
+#define CH2 9   // Connect Digital Pin 9 on Arduino to CH2 on Relay Module (may be labelled IN2)
+#define CH3 8   // Connect Digital Pin 8 on Arduino to CH3 on Relay Module (may be labelled IN3)
+#define CH4 7   // Connect Digital Pin 7 on Arduino to CH4 on Relay Module (may be labelled IN4)
+
+void setup(){
+ // Open serial connection.
+ Serial.begin(9600);
+ 
+ //Define the LED outputs
+ pinMode(ledWhite, OUTPUT); 
+ pinMode(ledRed, OUTPUT);
+ pinMode(ledYellow, OUTPUT);
+ pinMode(ledPin, OUTPUT); //SGP Test Pin
+ analogWrite(ledPin, 0);
+
+ //Setup all the Relay Pins
+ pinMode(CH1, OUTPUT);
+ pinMode(CH2, OUTPUT);
+ pinMode(CH3, OUTPUT);
+ pinMode(CH4, OUTPUT);
+ digitalWrite(CH1, HIGH);  //Dectivate realy channel 1
+ digitalWrite(CH2, HIGH);  //Dectivate realy channel 2
+ digitalWrite(CH3, HIGH);  //Dectivate realy channel 3
+ digitalWrite(CH4, HIGH);  //Dectivate realy channel 4
+
+ //Define the servo
+ servo1.attach(0); //analog pin 0
+
+//2x LED Blink startup check
+digitalWrite(ledRed, HIGH);
+digitalWrite(ledWhite, HIGH);
+digitalWrite(ledYellow, HIGH);
+delay(500);
+digitalWrite(ledRed, LOW);
+digitalWrite(ledWhite, LOW);     
+digitalWrite(ledYellow, LOW); 
+delay(500);   
+digitalWrite(ledRed, HIGH);
+digitalWrite(ledWhite, HIGH);
+digitalWrite(ledYellow, HIGH);
+delay(500);
+digitalWrite(ledRed, LOW);
+digitalWrite(ledWhite, LOW);     
+digitalWrite(ledYellow, LOW); 
+}
+
+void loop(){
+//Nothing in here as we’re only using the Arduino to listen to the serial port
+handleSerial();
+}
+
+void handleSerial()
+{
+  if( Serial.available() >= 6 )  // all incoming communications are fixed length at 6 bytes including the \n
+  {
+    char* cmd;
+  char* data;
+    char temp[10];
+    int len = 0;
+    char str[20];
+    memset(str, 0, 20);
+  // I don't personally like using the \n as a command character for reading.  
+  // but that's how the command set is.
+    Serial.readBytesUntil('\n', str, 20);
+  cmd = str + 1;
+  data = str + 2;
+  // useful for debugging to make sure your commands came through and are parsed correctly.
+    if( false )
+    {
+      sprintf( temp, "cmd = >%c%s;", cmd, data);
+      Serial.println(temp);
+    } 
+    switch( *cmd )
+    {
+    /*
+    Ping device
+      Request: >P000\n
+      Return : *Pii000\n
+        id = deviceId
+    /*
+    Turn light on
+      Request: >L000\n
+      Return : *Lii000\n
+        id = deviceId
+    */
+      case 'L':
+      sprintf(temp, "*L%d000", deviceId);
+      Serial.println(temp);
+      Serial.println("Turning on LED");
+      lightStatus = ON;
+      digitalWrite(ledPin, HIGH);
+      break;
+    /*
+    Turn light off
+      Request: >D000\n
+      Return : *Dii000\n
+        id = deviceId
+    */
+      case 'D':
+      sprintf(temp, "*D%d000", deviceId);
+      Serial.println(temp);
+      Serial.println("Turning off LED");
+      lightStatus = OFF;
+      digitalWrite(ledPin, LOW);
+      break;
+    /*
+    Get device status:
+      Request: >S000\n
+      Return : *SidMLC\n
+        id = deviceId
+        M  = motor status( 0 stopped, 1 running)
+        L  = light status( 0 off, 1 on)
+        C  = Cover Status( 0 moving, 1 closed, 2 open)
+    */
+      case 'S': 
+        sprintf( temp, "*S%d%d%d%d",deviceId, motorStatus, lightStatus, coverStatus);
+        Serial.println(temp);
+        break;
+    /*
+    Get firmware version
+      Request: >V000\n
+      Return : *Vii001\n
+        id = deviceId
+    */
+    }    
+  while( Serial.available() > 0 )
+    Serial.read();
+  }
+}
+
+void serialEvent()
+
+{if (Serial.available()) {
+   char ser = Serial.read();
+   if(ser == 'O'){  //Detect an open dust cover command
+    digitalWrite(ledWhite, HIGH);
+    servo1.write(open_angle);
+    delay(1000);
+    digitalWrite(ledWhite, LOW);
+   }else if(ser == 'C'){   //Detect a close dust cover command
+    digitalWrite(ledRed, HIGH);
+    servo1.write(close_angle);
+    delay(1000);
+    digitalWrite(ledRed, LOW);
+   }else if(ser == 'F'){   //Detect a turn on flat panel via relay command
+    digitalWrite(ledYellow, HIGH);
+    digitalWrite(CH1, HIGH);  //Activate realy channel 1
+    delay(3000);
+    digitalWrite(ledYellow, LOW);
+    }else if(ser == 'Q'){   //Detect a turn off flat panel via relay command
+    digitalWrite(ledYellow, HIGH);
+    digitalWrite(CH1, LOW);  //Dectivate realy channel 1
+    delay(3000);
+    digitalWrite(ledYellow, LOW);
+ }
+}
+}
